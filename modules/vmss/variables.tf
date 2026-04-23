@@ -30,3 +30,13 @@ variable "docker_image" {
 variable "cloud_init_script_path" {
   type = string
 }
+
+variable "application_name" {
+  type = string
+  description = "The name of the application to run in the Docker container"
+}
+variable "lb_backend_pool_id" {
+  type = string
+  description = "The ID of the load balancer backend pool to associate with the VMSS"
+}
+

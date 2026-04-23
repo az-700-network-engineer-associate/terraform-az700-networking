@@ -51,3 +51,18 @@ variable "vmss_name" {
   description = "value of vmss name"
   type        = string
 }
+variable "application_name" {
+  type = string
+  description = "The name of the application to run in the Docker container"
+}
+variable "load_balancer_name" {
+  description = "value of load balancer name"
+}
+variable "nsg_name" {
+  type = string
+  description = "value of nsg name"
+}
+variable "rule_name" {
+  type = string
+  description = "The name of the network security rule"
+}

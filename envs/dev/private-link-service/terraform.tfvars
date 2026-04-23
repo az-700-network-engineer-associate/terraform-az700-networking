@@ -1,0 +1,16 @@
+resource_group_name="rg-private-link-service-westus2"
+location="westus2"
+vnet_name="vnet-private-link-service-westus2"
+vnet_address_space=["10.0.0.0/16"]
+subnet_address_prefixes=["10.0.1.0/24"]
+subnet_name="subnet-private-link-service-westus2"
+admin_password="Jadapeta@909"
+admin_username="az700admin"
+docker_image="devopsdeveloper909/azure-private-link-service:latest"
+docker_password="Jadapeta@909"
+docker_username="devopsdeveloper909"
+vmss_name="vmss-private-link-service-westus2"
+application_name="azure-private-link-service-westus2"
+load_balancer_name="lb-private-link-service-westus2"
+nsg_name="nsg-private-link-service-westus2"
+rule_name="Allow-Internet-LB-80"
