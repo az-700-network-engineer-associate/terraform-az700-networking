@@ -1,12 +1,12 @@
 
-resource "azurerm_public_ip" "lb_public_ip" {
+/*resource "azurerm_public_ip" "lb_public_ip" {
   name                = "${var.load_balancer_name}-public-ip"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
   
-}
+}*/
 resource "azurerm_lb" "lb" {
     
   location            = var.location
@@ -17,6 +17,7 @@ resource "azurerm_lb" "lb" {
   frontend_ip_configuration {
     name                 = "${var.load_balancer_name}-lb-frontend-ip"
     #public_ip_address_id = azurerm_public_ip.lb_public_ip.id
+    subnet_id = var.subnet_id
      private_ip_address_allocation = "Dynamic"   
 }
 }

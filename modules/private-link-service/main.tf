@@ -46,6 +46,7 @@ module "loadbalancer" {
   location            = var.location
   resource_group_name = var.resource_group_name
   load_balancer_name  = var.load_balancer_name
+  subnet_id           = module.subnet.subnet_id
 }
 module "vmss" {
   depends_on             = [module.loadbalancer]
