@@ -16,7 +16,8 @@ resource "azurerm_lb" "lb" {
 
   frontend_ip_configuration {
     name                 = "${var.load_balancer_name}-lb-frontend-ip"
-    public_ip_address_id = azurerm_public_ip.lb_public_ip.id
+    #public_ip_address_id = azurerm_public_ip.lb_public_ip.id
+     private_ip_address_allocation = "Dynamic"   
 }
 }
   resource azurerm_lb_backend_address_pool "backend_pool" {
