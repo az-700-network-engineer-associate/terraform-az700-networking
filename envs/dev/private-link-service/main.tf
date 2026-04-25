@@ -16,5 +16,6 @@ module "private_link_service" {
   load_balancer_name=var.load_balancer_name
   nsg_name = var.nsg_name
   rule_name = var.rule_name
-
+  storage_account_name = var.storage_account_name
+  storage_container_name = var.storage_container_name
 }
