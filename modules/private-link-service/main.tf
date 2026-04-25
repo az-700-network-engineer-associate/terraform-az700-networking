@@ -74,3 +74,27 @@ module "vmss" {
   application_name       = var.application_name
   lb_backend_pool_id     = module.loadbalancer.lb_backend_pool_id
 }
+
+data "azurerm_client_config" "current" {}
+
+resource "azurerm_private_link_service" "pls" {
+  name                = "vmss-pls"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  load_balancer_frontend_ip_configuration_ids = [
+    module.loadbalancer.lb_frontend_ip_configuration_id
+  ]
+
+  nat_ip_configuration {
+    name                       = "pls-nat-ip"
+    private_ip_address         = "10.0.1.10"
+    private_ip_address_version = "IPv4"
+    subnet_id                  = module.subnet.subnet_id
+    primary                    = true
+  }
+
+  auto_approval_subscription_ids = [
+    data.azurerm_client_config.current.subscription_id
+  ]
+}
