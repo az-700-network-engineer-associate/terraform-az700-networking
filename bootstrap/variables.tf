@@ -7,10 +7,7 @@ variable "storage_container_name" {
   description = "The name of the storage container. Container names must be between 3 and 63 characters in length and may contain numbers, lowercase letters, and hyphens only. Container names must begin with a letter or number, and must end with a letter or number."
   type        = string
 }
-variable "tfstate_key" {
-  description = "The name of the tfstate file in the storage container."
-  type        = string
-}
+
 variable "resource_group_name" {
   description = "The name of the resource group"
   type        = string
