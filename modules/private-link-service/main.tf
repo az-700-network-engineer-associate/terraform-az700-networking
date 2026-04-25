@@ -64,11 +64,3 @@ module "vmss" {
   application_name       = var.application_name
   lb_backend_pool_id     = module.loadbalancer.lb_backend_pool_id
 }
-
-module "storage_account" {
-  source = "../strorage-account"
-  storage_account_name = var.storage_account_name
-  resource_group_name  = var.resource_group_name
-  location             = var.location 
-  storage_container_name = var.storage_container_name
-} 
