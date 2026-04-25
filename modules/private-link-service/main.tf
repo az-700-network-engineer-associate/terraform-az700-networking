@@ -23,6 +23,16 @@ module "subnet" {
   vnet_name               = module.vnet.vnet_name
 }
 
+module "nat_gatewag_subnet" {
+  source = "../nat_gateway"
+  depends_on          = [module.subnet]
+  nat_gateway_name    = var.nat_gateway_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = module.subnet.subnet_id
+  
+}
+
 module "network_security_group" {
   source              = "../nsg"
   depends_on          = [module.subnet]

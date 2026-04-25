@@ -66,3 +66,8 @@ variable "rule_name" {
   type = string
   description = "The name of the network security rule"
 }
+
+variable "nat_gateway_name" {
+  description = "The name of the NAT gateway"
+  type        = string
+}

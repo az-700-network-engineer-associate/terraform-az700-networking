@@ -16,4 +16,5 @@ module "private_link_service" {
   load_balancer_name=var.load_balancer_name
   nsg_name = var.nsg_name
   rule_name = var.rule_name
+  nat_gateway_name = var.nat_gateway_name
 }

@@ -89,3 +89,7 @@ variable "tfstate_key" {
   description = "The name of the tfstate file in the storage account container"
   type        = string  
 }
+variable "nat_gateway_name" {
+  description = "The name of the NAT gateway"
+  type        = string
+}
