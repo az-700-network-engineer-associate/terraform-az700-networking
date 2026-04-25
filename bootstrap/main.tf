@@ -1,4 +1,4 @@
-resource "azurerm_resource_group" "rg-pls-dev" {
+resource "azurerm_resource_group" "rg-pls-bootstrap-dev" {
   name     = var.resource_group_name
   location = var.location
 }
