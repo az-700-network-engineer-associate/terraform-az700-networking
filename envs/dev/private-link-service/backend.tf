@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-    resource_group_name  = var.resource_group_name
-    storage_account_name = var.storage_account_name
-    container_name       = var.storage_container_name
-    key                  = var.tfstate_key
+    resource_group_name  = "rg-private-link-service-dev"
+    storage_account_name = "storageacttfstateplsdev"
+    container_name       = "tfstate-container-pls-dev"
+    key                  = "dev-pls.tfstate"
   }
 }
