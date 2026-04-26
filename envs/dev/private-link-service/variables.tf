@@ -62,6 +62,11 @@ variable "vmss_name" {
   description = "The name of the virtual machine scale set"
   type        = string
 }
+
+variable "vmss_size" {
+  type = string
+  description = "value"
+}
 variable "load_balancer_name" {
   description = "The name of the load balancer"
   type        = string
@@ -92,4 +97,52 @@ variable "tfstate_key" {
 variable "nat_gateway_name" {
   description = "The name of the NAT gateway"
   type        = string
+}
+
+# Consumer variables
+variable "consumer_resource_group_name" {
+  description = "The name of the consumer resource group"
+  type        = string
+} 
+variable "consumer_location" {
+  description = "The location of the consumer resource group"
+  type        = string
+}
+variable "consumer_vnet_name" {
+  description = "The name of the consumer virtual network"
+  type        = string
+}
+variable "consumer_vnet_address_space" {
+  description = "The address space of the consumer virtual network"
+  type        = list(string)
+}
+variable "consumer_subnet_name" {
+  description = "The name of the consumer subnet"
+  type        = string
+}
+variable "consumer_subnet_address_prefixes" {
+  description = "The address prefixes of the consumer subnet"
+  type        = list(string)
+}
+variable "consumer_vm_name" {
+  type = string
+  description = "The name of the consumer virtual machine"
+}
+variable "consumer_vm_size" {
+  type = string
+  description = "The size of the consumer virtual machine"
+}
+
+# Link between consumer and provider
+variable "consumer_private_endpoint_name" {
+  type = string
+  description = "The name of the private endpoint in the consumer subscription"
+}
+variable "private_service_connection_name" {
+  type = string
+  description = "The name of the private service connection"
+}
+variable "provider_private_link_service_name" {
+  type = string
+  description = "The name of the private link service in the provider subscription"
 }

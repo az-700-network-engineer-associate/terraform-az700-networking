@@ -51,6 +51,10 @@ variable "vmss_name" {
   description = "value of vmss name"
   type        = string
 }
+variable "vmss_size" {
+  type = string
+  description = "The size of the virtual machine scale set"
+}
 variable "application_name" {
   type = string
   description = "The name of the application to run in the Docker container"
@@ -69,5 +73,58 @@ variable "rule_name" {
 
 variable "nat_gateway_name" {
   description = "The name of the NAT gateway"
+  type        = string
+}
+
+# Provider Private Link Service
+variable "provider_private_link_service_name" {
+  description = "The name of the private link service created by the provider"
+  type        = string
+}
+
+
+# Consumer variables
+variable "consumer_resource_group_name" {
+  description = "The name of the consumer resource group"
+  type        = string
+}
+variable "consumer_location" {
+  description = "The location of the consumer resource group"
+  type        = string
+}
+variable "consumer_vnet_name" {
+  description = "The name of the consumer virtual network"
+  type        = string
+}
+variable "consumer_vnet_address_space" {
+  description = "The address space of the consumer virtual network"
+  type        = list(string)
+}
+variable "consumer_subnet_name" {
+  description = "The name of the consumer subnet"
+  type        = string
+}
+variable "consumer_subnet_address_prefixes" {
+  description = "The address prefixes of the consumer subnet"
+  type        = list(string)
+}
+
+variable "consumer_vm_name" {
+  type = string
+  description = "The name of the consumer virtual machine"
+}
+variable "consumer_vm_size" {
+  type = string
+  description = "The size of the consumer virtual machine"
+}
+
+# Link between provider and consumer
+variable "private_service_connection_name" {
+  description = "The name of the private link service created by the provider"
+  type        = string
+}
+
+variable "consumer_private_endpoint_name" {
+  description = "The name of the private endpoint created by the consumer"
   type        = string
 }

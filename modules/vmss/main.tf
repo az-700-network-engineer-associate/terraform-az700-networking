@@ -4,7 +4,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   resource_group_name             = var.resource_group_name
   location                        = var.location
   instances = 2
-  sku                             = "Standard_DC1ds_v3"
+  sku                             = var.vmss_size
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = false

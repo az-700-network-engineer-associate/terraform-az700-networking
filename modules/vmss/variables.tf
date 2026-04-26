@@ -39,4 +39,7 @@ variable "lb_backend_pool_id" {
   type = string
   description = "The ID of the load balancer backend pool to associate with the VMSS"
 }
-
+variable "vmss_size" {
+  type = string
+  
+}

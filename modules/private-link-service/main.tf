@@ -24,13 +24,13 @@ module "subnet" {
 }
 
 module "nat_gatewag_subnet" {
-  source = "../nat_gateway"
+  source              = "../nat_gateway"
   depends_on          = [module.subnet]
   nat_gateway_name    = var.nat_gateway_name
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = module.subnet.subnet_id
-  
+
 }
 
 module "network_security_group" {
@@ -73,12 +73,15 @@ module "vmss" {
   vmss_name              = var.vmss_name
   application_name       = var.application_name
   lb_backend_pool_id     = module.loadbalancer.lb_backend_pool_id
+  vmss_size              = var.vmss_size
 }
+
+# Provider Private Link Service
 
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_private_link_service" "pls" {
-  name                = "vmss-pls"
+  name                = var.provider_private_link_service_name
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -94,14 +97,65 @@ resource "azurerm_private_link_service" "pls" {
     primary                    = true
   }
 
- # ✅ ADD THIS (MUST MATCH AUTO APPROVAL)
+  # ✅ ADD THIS (MUST MATCH AUTO APPROVAL)
   visibility_subscription_ids = [
-     data.azurerm_client_config.current.subscription_id 
+    data.azurerm_client_config.current.subscription_id
   ]
-  
+
   # ✅ ADD THIS (MUST MATCH AUTO APPROVAL)
   auto_approval_subscription_ids = [
     data.azurerm_client_config.current.subscription_id
   ]
+}
+
+
+#Consumer VM
+
+module "consumer_vnet" {
+  source              = "../vnet"
+  resource_group_name = var.consumer_resource_group_name
+  location            = var.consumer_location
+  vnet_name           = var.consumer_vnet_name
+  vnet_address_space  = var.consumer_vnet_address_space
+}
+
+module "consumer_subnet" {
+  source                  = "../subnet"
+  resource_group_name     = var.consumer_resource_group_name
+  vnet_name               = var.consumer_vnet_name
+  subnet_name             = var.consumer_subnet_name
+  subnet_address_prefixes = var.consumer_subnet_address_prefixes
+}
+
+module "consumer_vm_nic" {
+  source              = "../nic"
+  resource_group_name = var.consumer_resource_group_name
+  location            = var.consumer_location
+  subnet_id           = module.consumer_subnet.subnet_id
+  vm_name             = var.consumer_vm_name
+}
+
+module "consumer_vm" {
+  source                = "../vm"
+  resource_group_name   = var.consumer_resource_group_name
+  location              = var.consumer_location
+  vm_name               = var.consumer_vm_name
+  admin_password        = var.admin_password
+  admin_username        = var.admin_username
+  vm_size               = var.consumer_vm_size
+  network_interface_ids = [module.consumer_vm_nic.vm_nic_id]
+}
+
+# Connection between consumer VM and Private Link Service
+
+module "consumer_private_endpoint" {
+  source                          = "../private-endpoint"
+  location                        = var.location
+  resource_group_name             = var.resource_group_name
+  subnet_id                       = module.consumer_subnet.subnet_id
+  private_endpoint_name           = var.consumer_private_endpoint_name
+  private_link_service_id         = azurerm_private_link_service.pls.id
+  private_service_connection_name = var.private_service_connection_name
 
 }
+
