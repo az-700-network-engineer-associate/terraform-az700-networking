@@ -6,9 +6,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name   = var.resource_group_name
   network_interface_ids = var.network_interface_ids
   size                  = var.vm_size
-  custom_data           = base64decode(file("${path.module}/scripts/install-nginx.sh"))
-  admin_username        = "az700admin"
-  admin_password        = "Jadapeta@909" # ⚠️ not recommended for prod
+  custom_data = filebase64("${path.module}/scripts/install-nginx.sh")
+  admin_username        =var.admin_username
+  admin_password        = var.admin_password
  
   source_image_reference {
     publisher = "Canonical"
