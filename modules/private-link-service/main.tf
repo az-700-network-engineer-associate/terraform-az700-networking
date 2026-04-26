@@ -108,20 +108,25 @@ resource "azurerm_private_link_service" "pls" {
   ]
 }
 
+resource "azurerm_resource_group" "rg-pls-consumer-dev" {
+  name     = var.consumer_resource_group_name
+  location = var.consumer_location
+  
+}
 
 #Consumer VM
 
 module "consumer_vnet" {
   source              = "../vnet"
-  resource_group_name = var.consumer_resource_group_name
-  location            = var.consumer_location
+  resource_group_name = azurerm_resource_group.rg-pls-consumer-dev.name
+  location            = azurerm_resource_group.rg-pls-consumer-dev.location
   vnet_name           = var.consumer_vnet_name
   vnet_address_space  = var.consumer_vnet_address_space
 }
 
 module "consumer_subnet" {
   source                  = "../subnet"
-  resource_group_name     = var.consumer_resource_group_name
+  resource_group_name     = azurerm_resource_group.rg-pls-consumer-dev.name
   vnet_name               = var.consumer_vnet_name
   subnet_name             = var.consumer_subnet_name
   subnet_address_prefixes = var.consumer_subnet_address_prefixes
@@ -129,16 +134,16 @@ module "consumer_subnet" {
 
 module "consumer_vm_nic" {
   source              = "../nic"
-  resource_group_name = var.consumer_resource_group_name
-  location            = var.consumer_location
+  resource_group_name = azurerm_resource_group.rg-pls-consumer-dev.name
+  location            = azurerm_resource_group.rg-pls-consumer-dev.location
   subnet_id           = module.consumer_subnet.subnet_id
   vm_name             = var.consumer_vm_name
 }
 
 module "consumer_vm" {
   source                = "../vm"
-  resource_group_name   = var.consumer_resource_group_name
-  location              = var.consumer_location
+  resource_group_name   = azurerm_resource_group.rg-pls-consumer-dev.name
+  location              = azurerm_resource_group.rg-pls-consumer-dev.location
   vm_name               = var.consumer_vm_name
   admin_password        = var.admin_password
   admin_username        = var.admin_username
@@ -150,8 +155,8 @@ module "consumer_vm" {
 
 module "consumer_private_endpoint" {
   source                          = "../private-endpoint"
-  location                        = var.location
-  resource_group_name             = var.resource_group_name
+  location                        = azurerm_resource_group.rg-pls-consumer-dev.location
+  resource_group_name             = azurerm_resource_group.rg-pls-consumer-dev.name
   subnet_id                       = module.consumer_subnet.subnet_id
   private_endpoint_name           = var.consumer_private_endpoint_name
   private_link_service_id         = azurerm_private_link_service.pls.id
