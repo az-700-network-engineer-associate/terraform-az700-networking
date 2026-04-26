@@ -93,8 +93,9 @@ resource "azurerm_private_link_service" "pls" {
     subnet_id                  = module.subnet.subnet_id
     primary                    = true
   }
-
+  # ✅ ADD THIS (MUST MATCH AUTO APPROVAL)
   auto_approval_subscription_ids = [
     data.azurerm_client_config.current.subscription_id
   ]
+
 }
