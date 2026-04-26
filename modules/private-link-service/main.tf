@@ -81,6 +81,7 @@ module "vmss" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_private_link_service" "pls" {
+  depends_on = [ module.loadbalancer ]
   name                = var.provider_private_link_service_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -127,6 +128,7 @@ module "consumer_vnet" {
 }
 
 module "consumer_subnet" {
+  depends_on = [ module.consumer_vnet ]
   source                  = "../subnet"
   resource_group_name     = azurerm_resource_group.rg-pls-consumer-dev.name
   vnet_name               = var.consumer_vnet_name
@@ -135,6 +137,7 @@ module "consumer_subnet" {
 }
 
 module "consumer_vm_nic" {
+  depends_on = [ module.consumer_subnet ]
   source              = "../nic"
   resource_group_name = azurerm_resource_group.rg-pls-consumer-dev.name
   location            = azurerm_resource_group.rg-pls-consumer-dev.location
@@ -143,6 +146,7 @@ module "consumer_vm_nic" {
 }
 
 module "consumer_vm" {
+  depends_on = [ module.consumer_vm_nic ]
   source                = "../vm"
   resource_group_name   = azurerm_resource_group.rg-pls-consumer-dev.name
   location              = azurerm_resource_group.rg-pls-consumer-dev.location
@@ -156,6 +160,7 @@ module "consumer_vm" {
 # Connection between consumer VM and Private Link Service
 
 module "consumer_private_endpoint" {
+  depends_on = [ module.consumer_subnet ]
   source                          = "../private-endpoint"
   location                        = azurerm_resource_group.rg-pls-consumer-dev.location
   resource_group_name             = azurerm_resource_group.rg-pls-consumer-dev.name
