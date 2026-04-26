@@ -1,3 +1,8 @@
+# Variables for the Private Link Service module
+
+# Provider variables
+
+# Resource group and location
 variable "resource_group_name" {
   description = "The  name of the resource group name"
   type        = string
@@ -6,6 +11,8 @@ variable "location" {
   description = "The location of the resource group"
   type        = string
 }
+
+# Virtual network and subnet
 variable "vnet_name" {
   description = "value of vnet name"
   type        = string
@@ -23,6 +30,16 @@ variable "subnet_name" {
   type        = string
 }
 
+# Virtual machine scale set
+
+ variable "vmss_name" {
+  description = "value of vmss name"
+  type        = string
+}
+variable "vmss_size" {
+  type = string
+  description = "The size of the virtual machine scale set"
+}
 variable "admin_password" {
   description = "The password for the admin user"
   type        = string
@@ -33,6 +50,7 @@ variable "admin_username" {
   type        = string
 }
 
+# Docker registry
 variable "docker_image" {
   description = "The Docker image to use"
   type        = string
@@ -42,26 +60,23 @@ variable "docker_password" {
   description = "The password for the Docker registry"
   type        = string
 }
-
 variable "docker_username" {
   description = "The username for the Docker registry"
   type        = string
 }
-variable "vmss_name" {
-  description = "value of vmss name"
-  type        = string
-}
-variable "vmss_size" {
-  type = string
-  description = "The size of the virtual machine scale set"
-}
+
 variable "application_name" {
   type = string
   description = "The name of the application to run in the Docker container"
 }
+
+
+# Load balancer
 variable "load_balancer_name" {
   description = "value of load balancer name"
 }
+
+# Network Security Group and Rule
 variable "nsg_name" {
   type = string
   description = "value of nsg name"
@@ -84,6 +99,9 @@ variable "provider_private_link_service_name" {
 
 
 # Consumer variables
+
+# Resource group and location
+
 variable "consumer_resource_group_name" {
   description = "The name of the consumer resource group"
   type        = string
@@ -92,6 +110,8 @@ variable "consumer_location" {
   description = "The location of the consumer resource group"
   type        = string
 }
+
+# Consumer virtual network and subnet
 variable "consumer_vnet_name" {
   description = "The name of the consumer virtual network"
   type        = string
@@ -109,6 +129,7 @@ variable "consumer_subnet_address_prefixes" {
   type        = list(string)
 }
 
+# Consumer virtual machine
 variable "consumer_vm_name" {
   type = string
   description = "The name of the consumer virtual machine"
