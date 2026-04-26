@@ -108,10 +108,12 @@ resource "azurerm_private_link_service" "pls" {
   ]
 }
 
+# Connection between consumer VM and Private Link Service
+# Resource group and consumer VM will be created in the consumer module, 
+#but we need to create the private endpoint here to connect to the private link service
 resource "azurerm_resource_group" "rg-pls-consumer-dev" {
   name     = var.consumer_resource_group_name
   location = var.consumer_location
-  
 }
 
 #Consumer VM
