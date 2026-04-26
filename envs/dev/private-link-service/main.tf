@@ -19,6 +19,9 @@ module "private_link_service" {
   rule_name = var.rule_name
   nat_gateway_name = var.nat_gateway_name
 
+  #Private Link Service
+  provider_private_link_service_name = var.provider_private_link_service_name
+
   # Consumer service
   consumer_resource_group_name     = var.consumer_resource_group_name
   consumer_location                = var.consumer_location
