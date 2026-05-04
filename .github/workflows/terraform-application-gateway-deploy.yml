@@ -22,8 +22,14 @@
       ARM_USE_OIDC: true
 
     jobs:
+      deploy-bootstrap:
+        uses: ./.github/workflows/terraform-bootstrap-deploy.yml
+        secrets: inherit
+
       deploy-appgtw-infra:
         runs-on: ubuntu-latest
+        needs:
+          - deploy-bootstrap
 
         steps:
           # Checkout Terraform Repo
