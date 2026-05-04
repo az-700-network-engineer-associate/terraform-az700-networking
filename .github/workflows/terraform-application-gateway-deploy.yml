@@ -2,12 +2,17 @@
     name: Terraform Application Gateway with Fairway wall Deployment
 
     on:
-      workflow_call:
+      workflow_dispatch:
+        inputs:
+          environment:
+            description: 'Environment to deploy to'
+            required: true
+            default: 'dev'
       push:
         branches:
           - main
         paths:
-          - 'envs/dev/application-gateway/**'
+          - '/dev/application-gateway/**'
           - 'modules/application-gateway/**'
           - '.github/workflows/terraform-application-gateway-deploy.yml'
             
@@ -56,26 +61,26 @@
           # Terraform in
           # Terraform Init
           - name: Terraform Init
-            working-directory: envs/dev/application-gateway
+            working-directory: envs/${inputs.environment}/application-gateway
             run: terraform init
 
           # Terraform Validate
           - name: Terraform Validate
-            working-directory: envs/dev/application-gateway
+            working-directory: envs/${inputs.environment}/application-gateway
             run: terraform validate
 
           - name: List Terraform Files
-            run: ls -R envs/dev/application-gateway
+            run: ls -R envs/${inputs.environment}/application-gateway
 
           # Terraform Plan
           - name: Terraform Plan
-            working-directory: envs/dev/application-gateway
+            working-directory: envs/${inputs.environment}/application-gateway
             run: terraform plan -out=tfplan
 
           # Terraform Apply
           - name: Terraform Apply
             if: github.ref == 'refs/heads/main'
-            working-directory: envs/dev/application-gateway
+            working-directory: envs/${inputs.environment}/application-gateway
             run: terraform apply -auto-approve tfplan
 
 
@@ -85,7 +90,7 @@
         runs-on: ubuntu-latest
 
         # 👇 THIS IS THE MAGIC
-        environment: dev
+        environment: ${inputs.environment}
 
         steps:
           - name: Checkout
@@ -107,7 +112,7 @@
           - name: Terraform Destroy
             run: terraform destroy -auto-approve
           - name: Terraform Destroy
-            working-directory: envs/dev/application-gateway
+            working-directory: envs/${inputs.environment}/application-gateway
             run: |
               terraform init
               terraform destroy -auto-approve
