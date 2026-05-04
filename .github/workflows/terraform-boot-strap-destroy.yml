@@ -1,0 +1,48 @@
+name: Terraform Bootstrap Destroy
+
+on:
+  workflow_call:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  destroy-bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Check bootstrap resource group exists
+        id: check_rg_bootstrap
+        run: |
+          if az group exists -n rg-pls-bootstrap-dev; then
+            echo "RG_EXISTS=true" >> $GITHUB_ENV
+            az group show -n rg-pls-bootstrap-dev
+            az group delete -n rg-pls-bootstrap-dev -y
+          else
+            echo "RG_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Check NetworkWatcherRG resource group exists
+        id: check_rg_network_watcher
+        run: |
+          if az group exists -n NetworkWatcherRG; then
+            echo "RG_EXISTS=true" >> $GITHUB_ENV
+            az group show -n NetworkWatcherRG
+            az group delete -n NetworkWatcherRG -y
+          else
+            echo "RG_EXISTS=false" >> $GITHUB_ENV
+          fi

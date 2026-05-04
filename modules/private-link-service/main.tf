@@ -74,6 +74,7 @@ module "vmss" {
   application_name       = var.application_name
   lb_backend_pool_id     = module.loadbalancer.lb_backend_pool_id
   vmss_size              = var.vmss_size
+  appgw_backend_pool_id  = null
 }
 
 # Provider Private Link Service

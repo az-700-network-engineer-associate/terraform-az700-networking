@@ -1,0 +1,112 @@
+
+    name: Terraform Application Gateway with Fairway wall Deployment
+
+    on:
+      workflow_call:
+      push:
+        branches:
+          - main
+        paths:
+          - 'envs/dev/application-gateway/**'
+          - 'modules/application-gateway/**'
+          - '.github/workflows/terraform-application-gateway-deploy.yml'
+            
+    permissions:
+      id-token: write   # ✅ REQUIRED for Azure OIDC
+      contents: read
+
+    env:
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_USE_OIDC: true
+
+    jobs:
+      deploy-appgtw-infra:
+        runs-on: ubuntu-latest
+
+        steps:
+          # Checkout Terraform Repo
+          - name: Checkout Terraform Repo
+            uses: actions/checkout@v4
+            with:
+              ref: main
+              token: ${{ secrets.TF_REPO_TOKEN }}
+
+          - name: List terraform repo Files
+            run: ls -ltr
+
+          # Setup Terraform
+          - name: Setup Terraform
+            uses: hashicorp/setup-terraform@v3
+
+          # Azure Login
+          - name: Azure Login
+            uses: azure/login@v2
+            with:
+              client-id: ${{ secrets.ARM_CLIENT_ID }}
+              tenant-id: ${{ secrets.ARM_TENANT_ID }}
+              subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          # Terraform in
+          # Terraform Init
+          - name: Terraform Init
+            working-directory: envs/dev/application-gateway
+            run: terraform init
+
+          # Terraform Validate
+          - name: Terraform Validate
+            working-directory: envs/dev/application-gateway
+            run: terraform validate
+
+          - name: List Terraform Files
+            run: ls -R envs/dev/application-gateway
+
+          # Terraform Plan
+          - name: Terraform Plan
+            working-directory: envs/dev/application-gateway
+            run: terraform plan -out=tfplan
+
+          # Terraform Apply
+          - name: Terraform Apply
+            if: github.ref == 'refs/heads/main'
+            working-directory: envs/dev/application-gateway
+            run: terraform apply -auto-approve tfplan
+
+
+      # 🔐 DESTROY (with approval)
+      destroy-appgtw-infra:
+        needs: [deploy-appgtw-infra]
+        runs-on: ubuntu-latest
+
+        # 👇 THIS IS THE MAGIC
+        environment: dev
+
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+            with:
+              ref: main
+              token: ${{ secrets.TF_REPO_TOKEN }}
+
+          - name: Setup Terraform
+            uses: hashicorp/setup-terraform@v3
+
+          - name: Azure Login
+            uses: azure/login@v2
+            with:
+              client-id: ${{ secrets.ARM_CLIENT_ID }}
+              tenant-id: ${{ secrets.ARM_TENANT_ID }}
+              subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+          - name: Terraform Destroy
+            run: terraform destroy -auto-approve
+          - name: Terraform Destroy
+            working-directory: envs/dev/application-gateway
+            run: |
+              terraform init
+              terraform destroy -auto-approve
+
+      destroy-bootstrap:
+        needs: [destroy-appgtw-infra]
+        uses: ./.github/workflows/terraform-boot-strap-destroy.yml
+        secrets: inherit

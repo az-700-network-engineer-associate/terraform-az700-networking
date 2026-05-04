@@ -1,0 +1,58 @@
+name: Terraform Bootstrap + Deploy
+
+on:
+  workflow_call:
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_USE_OIDC: true
+
+jobs:
+  # 🧱 1) BOOTSTRAP (runs once or idempotent)
+  deploy-bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.TF_REPO_TOKEN }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Remove bootstrap resource group if exists
+        id: check_rg_bootstrap
+        run: |
+          if az group exists -n rg-pls-bootstrap-dev; then
+            echo "RG_EXISTS=true" >> $GITHUB_ENV
+            az group show -n rg-pls-bootstrap-dev
+            az group delete -n rg-pls-bootstrap-dev -y
+          else
+            echo "RG_EXISTS=false" >> $GITHUB_ENV
+          fi 
+
+      - name: Terraform Init (bootstrap)
+        working-directory: bootstrap
+        run: terraform init
+
+      - name: Terraform Apply (bootstrap)
+        working-directory: bootstrap
+        run: terraform apply -auto-approve
+  deploy-pls-infra:
+    needs: [deploy-bootstrap]
+    uses: ./.github/workflows/terraform-pls-infra-deploy-and-destroy.yml
+    secrets: inherit

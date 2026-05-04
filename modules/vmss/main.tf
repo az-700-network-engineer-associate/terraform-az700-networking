@@ -23,7 +23,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
       name      = "${var.vmss_name}-ipconfig"
       subnet_id = var.subnet_id
       primary = true
-      load_balancer_backend_address_pool_ids = [var.lb_backend_pool_id]
+
+      # Associate the VMSS instances with the load balancer backend pool
+      load_balancer_backend_address_pool_ids = var.lb_backend_pool_id!=null?[var.lb_backend_pool_id]:[]
+      application_gateway_backend_address_pool_ids = var.appgw_backend_pool_id!=null?[var.appgw_backend_pool_id]:[] 
     }
   }
   os_disk {
