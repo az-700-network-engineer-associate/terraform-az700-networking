@@ -1,12 +1,12 @@
-resource "azurerm_resource_group" "rg-pls-bootstrap-dev" {
+resource "azurerm_resource_group" "rg-bootstrap-dev" {
   name     = var.resource_group_name
   location = var.location
 }
 
 resource "azurerm_storage_account" "tfstatestorageact" {
   name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.rg-pls-bootstrap-dev.name
-  location                 = azurerm_resource_group.rg-pls-bootstrap-dev.location
+  resource_group_name      = azurerm_resource_group.rg-bootstrap-dev.name
+  location                 = azurerm_resource_group.rg-bootstrap-dev.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }

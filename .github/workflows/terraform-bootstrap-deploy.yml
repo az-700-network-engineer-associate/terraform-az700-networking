@@ -37,10 +37,10 @@ jobs:
       - name: Remove bootstrap resource group if exists
         id: check_rg_bootstrap
         run: |
-          if az group exists -n rg-pls-bootstrap-dev; then
+          if az group exists -n rg-bootstrap-dev; then
             echo "RG_EXISTS=true" >> $GITHUB_ENV
-            az group show -n rg-pls-bootstrap-dev
-            az group delete -n rg-pls-bootstrap-dev -y
+            az group show -n rg-bootstrap-dev
+            az group delete -n rg-bootstrap-dev -y
           else
             echo "RG_EXISTS=false" >> $GITHUB_ENV
           fi 
@@ -52,6 +52,7 @@ jobs:
       - name: Terraform Apply (bootstrap)
         working-directory: bootstrap
         run: terraform apply -auto-approve
+        
   deploy-pls-infra:
     needs: [deploy-bootstrap]
     uses: ./.github/workflows/terraform-pls-infra-deploy-and-destroy.yml

@@ -28,10 +28,10 @@ jobs:
       - name: Check bootstrap resource group exists
         id: check_rg_bootstrap
         run: |
-          if az group exists -n rg-pls-bootstrap-dev; then
+          if az group exists -n rg-bootstrap-dev; then
             echo "RG_EXISTS=true" >> $GITHUB_ENV
-            az group show -n rg-pls-bootstrap-dev
-            az group delete -n rg-pls-bootstrap-dev -y
+            az group show -n rg-bootstrap-dev
+            az group delete -n rg-bootstrap-dev -y
           else
             echo "RG_EXISTS=false" >> $GITHUB_ENV
           fi
