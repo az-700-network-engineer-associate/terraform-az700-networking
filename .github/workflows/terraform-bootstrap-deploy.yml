@@ -19,9 +19,9 @@ jobs:
 
 
     steps:
-      - name : TF_TO_REPO_TOKEN is ${{ secrets.TF_REPO_TOKEN }}
+      - name : TF_TO_REPO_TOKEN 
         run: echo "TF_REPO_TOKEN is ${{ secrets.TF_REPO_TOKEN }}"
-         
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
