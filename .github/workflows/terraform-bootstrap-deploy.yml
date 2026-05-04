@@ -53,7 +53,4 @@ jobs:
         working-directory: bootstrap
         run: terraform apply -auto-approve
         
-  deploy-pls-infra:
-    needs: [deploy-bootstrap]
-    uses: ./.github/workflows/terraform-pls-infra-deploy-and-destroy.yml
-    secrets: inherit
+ 
