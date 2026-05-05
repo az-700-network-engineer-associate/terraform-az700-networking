@@ -2,6 +2,13 @@ name: Terraform Bootstrap + Deploy
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+        default: 'dev'
+
 permissions:
   id-token: write
   contents: read
@@ -11,6 +18,7 @@ env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_USE_OIDC: true
+  environment: ${{ inputs.environment }}
 
 jobs:
   # 🧱 1) BOOTSTRAP (runs once or idempotent)
@@ -56,6 +64,10 @@ jobs:
 
       - name: Terraform Apply (bootstrap)
         working-directory: bootstrap
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve \
+            -var="environment=${{ inputs.environment }}" \
+            -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" \
+            -var="storage_account_name=storageacttfstate${{ inputs.environment }}" \
+            -var="container_name=tf-state-${{ inputs.environment }}"
         
  
