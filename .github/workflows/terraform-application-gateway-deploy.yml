@@ -116,11 +116,11 @@
           - name: Terraform Destroy
             working-directory: envs/${{ inputs.environment }}/application-gateway
             run: |
-              terraform init \
-                -backend-config="resource_group_name=rg-appgw-bootstrap-${{ inputs.environment }}" \
-                -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" \
-                -backend-config="container_name=tf-state-appgw-${{ inputs.environment }}" \
-                -backend-config="key=application-gateway-${{ inputs.environment }}.tfstate"
+              terraform apply -auto-approve \
+                -var="environment=${{ inputs.environment }}" \
+                -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" \
+                -var="storage_account_name=storageacttfstate${{ inputs.environment }}" \
+                -var="container_name=tf-state-${{ inputs.environment }}"
               
       destroy-bootstrap:
         needs: [destroy-appgtw-infra]
