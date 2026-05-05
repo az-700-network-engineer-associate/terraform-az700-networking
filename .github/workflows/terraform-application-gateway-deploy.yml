@@ -29,6 +29,8 @@
     jobs:
       deploy-bootstrap:
         uses: ./.github/workflows/terraform-bootstrap-deploy.yml
+        with:
+          environment: ${{ inputs.environment }}
         secrets: inherit
 
       deploy-appgtw-infra:
