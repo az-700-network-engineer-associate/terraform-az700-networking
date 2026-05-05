@@ -61,26 +61,26 @@
           # Terraform in
           # Terraform Init
           - name: Terraform Init
-            working-directory: envs/${inputs.environment}/application-gateway
+            working-directory: envs/${{ inputs.environment }}/application-gateway
             run: terraform init
 
           # Terraform Validate
           - name: Terraform Validate
-            working-directory: envs/${inputs.environment}/application-gateway
+            working-directory: envs/${{ inputs.environment }}/application-gateway
             run: terraform validate
 
           - name: List Terraform Files
-            run: ls -R envs/${inputs.environment}/application-gateway
+            run: ls -R envs/${{ inputs.environment }}/application-gateway
 
           # Terraform Plan
           - name: Terraform Plan
-            working-directory: envs/${inputs.environment}/application-gateway
+            working-directory: envs/${{ inputs.environment }}/application-gateway
             run: terraform plan -out=tfplan
 
           # Terraform Apply
           - name: Terraform Apply
             if: github.ref == 'refs/heads/main'
-            working-directory: envs/${inputs.environment}/application-gateway
+            working-directory: envs/${{ inputs.environment }}/application-gateway
             run: terraform apply -auto-approve tfplan
 
 
@@ -90,7 +90,7 @@
         runs-on: ubuntu-latest
 
         # 👇 THIS IS THE MAGIC
-        environment: ${inputs.environment}
+        environment: ${{ inputs.environment }}
 
         steps:
           - name: Checkout
@@ -112,7 +112,7 @@
           - name: Terraform Destroy
             run: terraform destroy -auto-approve
           - name: Terraform Destroy
-            working-directory: envs/${inputs.environment}/application-gateway
+            working-directory: envs/${{ inputs.environment }}/application-gateway
             run: |
               terraform init
               terraform destroy -auto-approve
