@@ -64,6 +64,6 @@ jobs:
 
       - name: Terraform Apply (bootstrap)
         working-directory: bootstrap
-        run: terraform apply -auto-approve -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -var="storage_account_name=storageact${{ inputs.environment }}" -var="container_name=tf-state-${{ inputs.environment }}"  
+        run: terraform apply -auto-approve -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -var="storage_account_name=storageacttfstate${{ inputs.environment }}" -var="container_name=tf_state_${{ inputs.environment }}"  
         
  
