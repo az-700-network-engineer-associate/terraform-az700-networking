@@ -9,9 +9,7 @@ variable "resource_group_name" {
 variable "location" {
   type = string
 }
-variable "appwg_subnet_address_prefix" {
-  type = list(string)
-}
+
 
 
 variable "admin_password" {
@@ -48,9 +46,6 @@ variable "vmss_size" {
 variable "resource_group_name" {
     type = string
 
-}
-variable "location" {
-  type = string
 }
 
 variable "vnet_name" {
