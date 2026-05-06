@@ -60,11 +60,16 @@
               client-id: ${{ secrets.ARM_CLIENT_ID }}
               tenant-id: ${{ secrets.ARM_TENANT_ID }}
               subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          # Terraform in
+
           # Terraform Init
           - name: Terraform Init
             working-directory: envs/${{ inputs.environment }}/application-gateway
-            run: terraform init
+            run: terraform init \
+                -var="environment=${{ inputs.environment }}" \
+                -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" \
+                -var="storage_account_name=storageacttfstate${{ inputs.environment }}" \
+                -var="container_name=tf-state-${{ inputs.environment }}"
+              
 
           # Terraform Validate
           - name: Terraform Validate
@@ -116,12 +121,7 @@
           - name: Terraform Destroy
             working-directory: envs/${{ inputs.environment }}/application-gateway
             run: |
-              terraform apply -auto-approve \
-                -var="environment=${{ inputs.environment }}" \
-                -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" \
-                -var="storage_account_name=storageacttfstate${{ inputs.environment }}" \
-                -var="container_name=tf-state-${{ inputs.environment }}"
-              
+              terraform apply -auto-approve 
       destroy-bootstrap:
         needs: [destroy-appgtw-infra]
         uses: ./.github/workflows/terraform-bootstrap-destroy.yml
