@@ -49,14 +49,13 @@ jobs:
       - name: Remove bootstrap resource group if exists
         id: check_rg_bootstrap
         run: |
-          RG_EXISTS=$(az group exists -n rg-bootstrap-dev && echo "true" || echo "false")
+          RG_EXISTS=$(az group exists -n rg-bootstrap-dev)
+          echo "RG_EXISTS=$RG_EXISTS" >> $GITHUB_ENV
+          echo "RG_EXISTS is $RG_EXISTS"
           if [ "$RG_EXISTS" = "true" ]; then
-            echo "RG_EXISTS=true" >> $GITHUB_ENV
             az group show -n rg-bootstrap-dev
             az group delete -n rg-bootstrap-dev -y
-          else
-            echo "RG_EXISTS=false" >> $GITHUB_ENV
-          fi 
+          fi
 
       - name: Terraform Init (bootstrap)
         working-directory: bootstrap
