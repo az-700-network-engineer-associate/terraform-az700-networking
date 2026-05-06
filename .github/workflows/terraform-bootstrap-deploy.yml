@@ -51,19 +51,20 @@ jobs:
         run: |
           RG_EXISTS=$(az group exists -n rg-bootstrap-dev && echo "true" || echo "false")
           if [ "$RG_EXISTS" = "true" ]; then
-            echo "RG_EXISTS=true" >> $GITHUB_ENV
+            echo "RG_EXISTS=true" >> $GITHUB_OUTPUT
             az group show -n rg-bootstrap-dev
             az group delete -n rg-bootstrap-dev -y
           else
-            echo "RG_EXISTS=false" >> $GITHUB_ENV
+            echo "RG_EXISTS=false" >> $GITHUB_OUTPUT
           fi 
 
       - name: Terraform Init (bootstrap)
+        if: ${{ steps.check_rg_bootstrap.outputs.RG_EXISTS == 'false' }} # Only init/apply if RG doesn't exist, otherwise skip to avoid state conflicts
         working-directory: bootstrap
         run: terraform init
 
       - name: Terraform Apply (bootstrap)
+        if: ${{ steps.check_rg_bootstrap.outputs.RG_EXISTS == 'false' }} # Only apply if RG doesn't exist, otherwise skip to avoid state conflicts
         working-directory: bootstrap
         run: terraform apply -auto-approve -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -var="storage_account_name=storageacttfstate${{ inputs.environment }}" -var="storage_container_name=tf-state-${{ inputs.environment }}"  
-        
- 
+          
