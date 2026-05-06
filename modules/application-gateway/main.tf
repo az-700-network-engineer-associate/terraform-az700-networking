@@ -1,16 +1,22 @@
+module "resource_group" {
+  source              = "../resource-group"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  
+}
 
 module "vnet" {
   source              = "../vnet"
-  depends_on          = [module.resource_group]
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  depends_on = [ module.resource_group ]
+  resource_group_name = module.resource_group.resource_group_name
+  location            = module.resource_group.location
   vnet_name           = var.vnet_name
   vnet_address_space  = var.vnet_address_space
 }
 
 module "app_gateway_subnet" {
     source              = "../subnet"
-    resource_group_name = var.resource_group_name
+    resource_group_name = module.resource_group.resource_group_name
     vnet_name = module.vnet.vnet_name
     subnet_name         = "${var.appgw_name}-subnet"
     subnet_address_prefixes = var.appwg_subnet_address_prefix
@@ -18,7 +24,7 @@ module "app_gateway_subnet" {
 
 module "backend_pool_subnet" {
     source              = "../subnet"
-    resource_group_name = var.resource_group_name
+    resource_group_name = module.resource_group.resource_group_name
     vnet_name = module.vnet.vnet_name
     subnet_name         = "${var.appgw_name}-backend-pool-subnet"
     subnet_address_prefixes = var.backend_pool_subnet_address_prefix
@@ -28,15 +34,15 @@ module "backend_pool_subnet" {
 
 resource "azurerm_public_ip" "appgw_public_ip" {
   name                = "${var.appgw_name}-public-ip"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  location            = module.resource_group.location
+  resource_group_name = module.resource_group.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 resource "azurerm_application_gateway" "appgw" {
   name                = var.appgw_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+  location            = module.resource_group.location
   sku {
     name     = "WAF_v2"
     tier     = "WAF_v2"
@@ -154,8 +160,8 @@ module "product-cloud-service-vmss" {
   docker_image           = var.product_docker_image // Modify this variable to point to the product cloud service Docker image
   docker_password        = var.docker_password
   docker_username        = var.docker_username
-  location               = var.location
-  resource_group_name    = var.resource_group_name
+  location               = module.resource_group.location
+  resource_group_name    = module.resource_group.resource_group_name
   subnet_id              = module.backend_pool_subnet.subnet_id
   vmss_name              = "product-cloud-service-vmss"
   application_name       = "product-cloud-service"
@@ -172,8 +178,8 @@ module "order-cloud-service-vmss" {
   docker_image           = var.order_docker_image // Modify this variable to point to the order cloud service Docker image
   docker_password        = var.docker_password
   docker_username        = var.docker_username
-  location               = var.location
-  resource_group_name    = var.resource_group_name
+  location               = module.resource_group.location
+  resource_group_name    = module.resource_group.resource_group_name
   subnet_id              = module.backend_pool_subnet.subnet_id
   vmss_name              = "order-cloud-service-vmss"
   application_name       = "order-cloud-service"

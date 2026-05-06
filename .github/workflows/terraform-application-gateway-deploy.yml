@@ -26,6 +26,7 @@
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_USE_OIDC: true
 
+
     jobs:
       deploy-bootstrap:
         uses: ./.github/workflows/terraform-bootstrap-deploy.yml
