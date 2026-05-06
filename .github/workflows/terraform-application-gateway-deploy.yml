@@ -64,13 +64,8 @@
           # Terraform Init
           - name: Terraform Init
             working-directory: envs/${{ inputs.environment }}/application-gateway
-            run: terraform init \
-                -var="environment=${{ inputs.environment }}" \
-                -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" \
-                -var="storage_account_name=storageacttfstate${{ inputs.environment }}" \
-                -var="container_name=tf-state-${{ inputs.environment }}"
-              
-
+            run: terraform init -var="environment=${{ inputs.environment }}" -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -var="storage_account_name=storageacttfstate${{ inputs.environment }}" -var="container_name=tf-state-${{ inputs.environment }}"
+          
           # Terraform Validate
           - name: Terraform Validate
             working-directory: envs/${{ inputs.environment }}/application-gateway
