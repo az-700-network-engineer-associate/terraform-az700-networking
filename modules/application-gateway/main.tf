@@ -167,7 +167,7 @@ module "product-cloud-service-vmss" {
   application_name       = "product-cloud-service"
   lb_backend_pool_id     = null
   vmss_size              = var.vmss_size
-  appgw_backend_pool_id  = azurerm_application_gateway.appgw.backend_address_pools[0].id
+  appgw_backend_pool_id  = azurerm_application_gateway.appgw.backend_address_pool[0].id
 }
 
 module "order-cloud-service-vmss" {
@@ -185,5 +185,5 @@ module "order-cloud-service-vmss" {
   application_name       = "order-cloud-service"
   lb_backend_pool_id     = null
   vmss_size              = var.vmss_size
-  appgw_backend_pool_id  = azurerm_application_gateway.appgw.backend_address_pools[1].id
+  appgw_backend_pool_id  = azurerm_application_gateway.appgw.backend_address_pool[1].id
 }
