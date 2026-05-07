@@ -56,7 +56,7 @@ resource "azurerm_application_gateway" "appgw" {
 
   frontend_port {
     name = "frontendPort"
-    port = 443
+    port = 80
   }
 
   frontend_ip_configuration {
