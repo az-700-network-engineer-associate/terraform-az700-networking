@@ -16,6 +16,7 @@ module "vnet" {
 
 module "app_gateway_subnet" {
     source              = "../subnet"
+    depends_on = [ module.vnet ]
     resource_group_name = module.resource_group.resource_group_name
     vnet_name = module.vnet.vnet_name
     subnet_name         = "${var.appgw_name}-subnet"
@@ -24,13 +25,12 @@ module "app_gateway_subnet" {
 
 module "backend_pool_subnet" {
     source              = "../subnet"
+    depends_on = [ module.vnet ]
     resource_group_name = module.resource_group.resource_group_name
     vnet_name = module.vnet.vnet_name
     subnet_name         = "${var.appgw_name}-backend-pool-subnet"
     subnet_address_prefixes = var.backend_pool_subnet_address_prefix
 }
-
-
 
 resource "azurerm_public_ip" "appgw_public_ip" {
   name                = "${var.appgw_name}-public-ip"
@@ -154,6 +154,7 @@ resource "azurerm_application_gateway" "appgw" {
 
 module "product-cloud-service-vmss" {
   source                 = "../vmss"
+  depends_on = [ azurerm_application_gateway.appgw ]
   admin_password         = var.admin_password
   admin_username         = var.admin_username
   cloud_init_script_path = "${path.module}/scripts/cloud-init.sh"
