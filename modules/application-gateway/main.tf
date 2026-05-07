@@ -44,8 +44,8 @@ resource "azurerm_application_gateway" "appgw" {
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.location
   sku {
-    name     = "WAF_v2"
-    tier     = "WAF_v2"
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
     capacity = 2
   }
 
