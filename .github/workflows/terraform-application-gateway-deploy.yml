@@ -91,7 +91,6 @@
       destroy-appgtw-infra:
         needs: [deploy-appgtw-infra]
         runs-on: ubuntu-latest
-
         # 👇 THIS IS THE MAGIC
         environment: ${{ inputs.environment }}
 
@@ -112,12 +111,14 @@
               tenant-id: ${{ secrets.ARM_TENANT_ID }}
               subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-          - name: Terraform Destroy
-            run: terraform destroy -auto-approve
+          - name: Reconnect to Backend to get the state
+            run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=app-gateway-${{ inputs.environment }}.tfstate"
+
           - name: Terraform Destroy
             working-directory: envs/${{ inputs.environment }}/application-gateway
             run: |
-              terraform apply -auto-approve 
+              terraform destroy -auto-approve 
+
       destroy-bootstrap:
         needs: [destroy-appgtw-infra]
         uses: ./.github/workflows/terraform-bootstrap-destroy.yml
