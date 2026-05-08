@@ -62,7 +62,18 @@
               tenant-id: ${{ secrets.ARM_TENANT_ID }}
               subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-          # Terraform Init
+          - name: Check rg-appgw-dev resource group exists
+            id: check_rg-appgw-dev
+            run: |
+              if az group exists -n rg-appgw-dev; then
+                echo "RG_APPGW_DEV_EXISTS=true" >> $GITHUB_ENV
+                az group show -n rg-appgw-dev
+                az group delete -n rg-appgw-dev -y
+              else
+                echo "RG_APPGW_DEV_EXISTS=false" >> $GITHUB_ENV
+              fi
+          
+            # Terraform Init
           - name: Terraform Init
             working-directory: envs/${{ inputs.environment }}/application-gateway
             run: terraform init -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=app-gateway-${{ inputs.environment }}.tfstate"
@@ -114,7 +125,7 @@
           - name: Reconnect to Backend to get the state
             run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=app-gateway-${{ inputs.environment }}.tfstate"
 
-          - name: Terraform Destroy
+          - name: App Gatewway Infra destroy
             working-directory: envs/${{ inputs.environment }}/application-gateway
             run: |
               terraform destroy -auto-approve 
