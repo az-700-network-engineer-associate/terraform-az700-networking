@@ -47,21 +47,25 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Remove bootstrap resource group if exists
-        id: check_rg_bootstrap
+        id: check_rg_bootstrap-dev
         run: |
-          RG_EXISTS=$(az group exists -n rg-bootstrap-dev)
-          echo "RG_EXISTS=$RG_EXISTS" >> $GITHUB_ENV
-          echo "RG_EXISTS is $RG_EXISTS"
-          if [ "$RG_EXISTS" = "true" ]; then
+          RG_BOOTSTRAP_DEV_EXISTS=$(az group exists -n rg-bootstrap-dev)
+          echo "RG_BOOTSTRAP_DEV_EXISTS is $RG_BOOTSTRAP_DEV_EXISTS"
+          if [ "$RG_BOOTSTRAP_DEV_EXISTS" = "true" ]; then
+            echo "RG_BOOTSTRAP_DEV_EXISTS=true" >> $GITHUB_OUTPUT
             az group show -n rg-bootstrap-dev
-            az group delete -n rg-bootstrap-dev -y
+          else
+            echo "RG_BOOTSTRAP_DEV_EXISTS=false" >> $GITHUB_OUTPUT
+            echo " rg-bootstrap-dev doesn't exist"
           fi
 
       - name: Terraform Init (bootstrap)
+        if: steps.check_rg_bootstrap-dev.outputs.RG_BOOTSTRAP_DEV_EXISTS == 'false'
         working-directory: bootstrap
         run: terraform init
 
       - name: Terraform Apply (bootstrap)
+        if: steps.check_rg_bootstrap-dev.outputs.RG_BOOTSTRAP_DEV_EXISTS == 'false'
         working-directory: bootstrap
         run: terraform apply -auto-approve -var="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -var="storage_account_name=storageacttfstate${{ inputs.environment }}" -var="storage_container_name=tf-state-${{ inputs.environment }}"  
         
