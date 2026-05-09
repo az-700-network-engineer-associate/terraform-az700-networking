@@ -1,7 +1,12 @@
 name: Deploy Application Gateway
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'environment to deploy'
+        default: dev
   push:
     branches:
       - main
@@ -13,7 +18,7 @@ jobs:
   deploy:
     uses: ./.github/workflows/reusable-terraform-module-deploy.yml
     with:
-      environment: dev
+      environment: ${{inputs.environment}}
       working_directory: envs/dev/application-gateway
       backend_key: appgw-dev.tfstate
     secrets: inherit
