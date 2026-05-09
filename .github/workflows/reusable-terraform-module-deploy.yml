@@ -39,6 +39,8 @@
 
       deploy-module-infra:
         runs-on: ubuntu-latest
+        # 👇 THIS IS THE MAGIC
+        environment: ${{ inputs.environment }}
         needs:
           - deploy-bootstrap
 
