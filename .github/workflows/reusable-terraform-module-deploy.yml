@@ -70,7 +70,7 @@
             # Terraform Init
           - name: Terraform Init
             working-directory: ${{inputs.working_directory}}
-            run: terraform init -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="${{inputs.backend_key}}"
+            run: terraform init -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=${{inputs.backend_key}}"
           
           # Terraform Validate
           - name: Terraform Validate
@@ -118,7 +118,7 @@
 
           - name: Reconnect to Backend to get the state
             working-directory: ${{inputs.working_directory}}
-            run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="${{inputs.backend_key}}"
+            run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=${{inputs.backend_key}}"
 
           - name: Module infra destroy
             working-directory: ${{inputs.working_directory}}
