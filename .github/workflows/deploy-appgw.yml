@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    uses: ./.github/workflows/reusable-terrafrom-module-deploy.yml
+    uses: ./.github/workflows/reusable-terraform-module-deploy.yml
     with:
       environment: dev
       working_directory: envs/dev/application-gateway
