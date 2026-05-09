@@ -13,6 +13,9 @@ on:
     paths:
       - 'envs/dev/application-gateway/**'
       - 'modules/application-gateway/**'
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
