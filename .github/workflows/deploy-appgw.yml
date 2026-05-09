@@ -1,0 +1,18 @@
+name: Deploy Application Gateway
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'envs/dev/application-gateway/**'
+      - 'modules/application-gateway/**'
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-terrafrom-module-deploy.yml
+    with:
+      environment: dev
+      working_directory: envs/dev/application-gateway
+      backend_key: appgw-dev.tfstate
+    secrets: inherit

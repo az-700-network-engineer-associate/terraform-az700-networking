@@ -1,21 +1,24 @@
 
-    name: Terraform Application Gateway with Fairway wall Deployment
+    name: Terraform resuable module deployment
 
     on:
-      workflow_dispatch:
+      workflow_call:
         inputs:
           environment:
             description: 'Environment to deploy to'
             required: true
             default: 'dev'
-      push:
-        branches:
-          - main
-        paths:
-          - '/dev/application-gateway/**'
-          - 'modules/application-gateway/**'
-          - '.github/workflows/terraform-application-gateway-deploy.yml'
-            
+            type: string
+          working_directory:
+            description: 'Module directory'
+            type: string
+            required: true
+          backend_key:
+            description: "Backend key for maintainer state"
+            type: string
+            required: true
+          
+
     permissions:
       id-token: write   # ✅ REQUIRED for Azure OIDC
       contents: read
@@ -34,7 +37,7 @@
           environment: ${{ inputs.environment }}
         secrets: inherit
 
-      deploy-appgtw-infra:
+      deploy-module-infra:
         runs-on: ubuntu-latest
         needs:
           - deploy-bootstrap
@@ -64,32 +67,32 @@
           
             # Terraform Init
           - name: Terraform Init
-            working-directory: envs/${{ inputs.environment }}/application-gateway
-            run: terraform init -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=app-gateway-${{ inputs.environment }}.tfstate"
+            working-directory: ${{inputs.working_directory}}
+            run: terraform init -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="${{inputs.backend_key}}"
           
           # Terraform Validate
           - name: Terraform Validate
-            working-directory: envs/${{ inputs.environment }}/application-gateway
+            working-directory: ${{inputs.working_directory}}
             run: terraform validate
 
           - name: List Terraform Files
-            run: ls -R envs/${{ inputs.environment }}/application-gateway
+            run: ls -R ${{inputs.working_directory}}
 
           # Terraform Plan
           - name: Terraform Plan
-            working-directory: envs/${{ inputs.environment }}/application-gateway
+            working-directory: ${{inputs.working_directory}}
             run: terraform plan -out=tfplan
 
           # Terraform Apply
           - name: Terraform Apply
             if: github.ref == 'refs/heads/main'
-            working-directory: envs/${{ inputs.environment }}/application-gateway
+            working-directory: ${{inputs.working_directory}}
             run: terraform apply -auto-approve tfplan
 
 
       # 🔐 DESTROY (with approval)
-      destroy-appgtw-infra:
-        needs: [deploy-appgtw-infra]
+      destroy-module-infra:
+        needs: [deploy-module-infra]
         runs-on: ubuntu-latest
         # 👇 THIS IS THE MAGIC
         environment: ${{ inputs.environment }}
@@ -112,15 +115,15 @@
               subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
           - name: Reconnect to Backend to get the state
-            working-directory: envs/${{ inputs.environment }}/application-gateway
-            run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="key=app-gateway-${{ inputs.environment }}.tfstate"
+            working-directory: ${{inputs.working_directory}}
+            run: terraform init -reconfigure -backend-config="resource_group_name=rg-bootstrap-${{ inputs.environment }}" -backend-config="storage_account_name=storageacttfstate${{ inputs.environment }}" -backend-config="container_name=tf-state-${{ inputs.environment }}" -backend-config="${{inputs.backend_key}}"
 
-          - name: App Gatewway Infra destroy
-            working-directory: envs/${{ inputs.environment }}/application-gateway
+          - name: Module infra destroy
+            working-directory: ${{inputs.working_directory}}
             run: |
               terraform destroy -auto-approve 
 
       destroy-bootstrap:
-        needs: [destroy-appgtw-infra]
+        needs: [destroy-module-infra]
         uses: ./.github/workflows/terraform-bootstrap-destroy.yml
         secrets: inherit
