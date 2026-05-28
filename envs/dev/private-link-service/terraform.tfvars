@@ -1,6 +1,6 @@
 # Provider Resource Group and Location
 resource_group_name="rg-pls-provider-dev"
-location="westus2"
+location="eastus"
 
 # Virtual Network and Subnet
 vnet_name="vnet-pls-provider-dev"
@@ -9,7 +9,7 @@ subnet_address_prefixes=["10.0.1.0/24"]
 subnet_name="subnet-pls-provider-dev"
 
 # Virtual Machine Scale Set
-vmss_size = "Standard_DC1ds_v3"
+vmss_size = "Standard_B1s"
 admin_password="Jadapeta@909"
 admin_username="az700admin"
 docker_image="devopsdeveloper909/azure-private-link-service:latest"
@@ -36,7 +36,7 @@ provider_private_link_service_name="pls-provider-dev"
 
 # Consumer Resource Group and Location
 consumer_resource_group_name="rg-pls-consumer-dev"
-consumer_location="westus2"
+consumer_location="eastus"
 
 # Consumer virtual network and subnet
 consumer_vnet_name="vnet-pls-consumer-dev"
@@ -45,7 +45,7 @@ consumer_subnet_name="subnet-pls-consumer-dev"
 consumer_subnet_address_prefixes=["10.2.1.0/27"]
 
 # Consumer virtual machine
-consumer_vm_size="Standard_DC1ds_v3"
+consumer_vm_size="Standard_B1s"
 consumer_vm_name="vm-pls-consumer-dev"
 
 # Link between consumer and provider

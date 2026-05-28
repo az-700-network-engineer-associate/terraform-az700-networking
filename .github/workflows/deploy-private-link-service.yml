@@ -1,0 +1,27 @@
+name: Deploy Private Link Service
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        description: 'environment to deploy'
+        default: dev
+  push:
+    branches:
+      - main
+    paths:
+      - 'envs/dev/private-link-service/**'
+      - 'modules/private-link-service/**'
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-terraform-module-deploy.yml
+    with:
+      environment: ${{inputs.environment}}
+      working_directory: envs/dev/private-link-service
+      backend_key: pls-dev.tfstate
+    secrets: inherit
