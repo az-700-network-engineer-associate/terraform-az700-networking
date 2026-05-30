@@ -1,6 +1,6 @@
 # Provider Resource Group and Location
 resource_group_name="rg-pls-provider-dev"
-location="eastus"
+location="centralindia"
 
 # Virtual Network and Subnet
 vnet_name="vnet-pls-provider-dev"
@@ -36,7 +36,7 @@ provider_private_link_service_name="pls-provider-dev"
 
 # Consumer Resource Group and Location
 consumer_resource_group_name="rg-pls-consumer-dev"
-consumer_location="eastus"
+consumer_location="centralindia"
 
 # Consumer virtual network and subnet
 consumer_vnet_name="vnet-pls-consumer-dev"
