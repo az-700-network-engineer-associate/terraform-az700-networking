@@ -9,7 +9,7 @@ subnet_address_prefixes=["10.0.1.0/24"]
 subnet_name="subnet-pls-provider-dev"
 
 # Virtual Machine Scale Set
-vmss_size = "Standard_B2s"
+vmss_size = "Standard_D2alds_v6"
 admin_password="Jadapeta@909"
 admin_username="az700admin"
 docker_image="devopsdeveloper909/azure-private-link-service:latest"
@@ -45,7 +45,7 @@ consumer_subnet_name="subnet-pls-consumer-dev"
 consumer_subnet_address_prefixes=["10.2.1.0/27"]
 
 # Consumer virtual machine
-consumer_vm_size="Standard_B2s"
+consumer_vm_size="Standard_D2alds_v6"
 consumer_vm_name="vm-pls-consumer-dev"
 
 # Link between consumer and provider
