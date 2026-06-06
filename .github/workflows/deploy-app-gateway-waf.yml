@@ -1,4 +1,4 @@
-name: Deploy Application Gateway
+name: Deploy Application Gateway WAF
 
 on:
   workflow_dispatch:
