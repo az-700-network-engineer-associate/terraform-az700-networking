@@ -1,5 +1,5 @@
-module "application-gateway-dev" {
-  source = "../../../modules/application-gateway"
+module "application-gateway-waf-dev" {
+  source = "../../../modules/application-gateway-waf"
     admin_password         = var.admin_password
     admin_username         = var.admin_username
     docker_password        = var.docker_password
