@@ -37,7 +37,7 @@ resource "azurerm_public_ip" "appgw_public_ip" {
   location            = module.resource_group.location
   resource_group_name = module.resource_group.resource_group_name
   allocation_method   = "Static"
-  sku                 = "WAF_v2"
+  sku                 = "StandardV2"
 }
 resource "azurerm_application_gateway" "appgw" {
   name                = var.appgw_name
