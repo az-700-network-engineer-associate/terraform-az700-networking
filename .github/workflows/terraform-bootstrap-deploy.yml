@@ -27,6 +27,10 @@ jobs:
     # 👇 THIS IS THE MAGIC
     environment: ${{ inputs.environment }} 
     steps:
+      - name : Debug Input Variables
+        run: |
+         echo "Environment is ${{ inputs.environment }}"
+
       - name : TF_TO_REPO_TOKEN 
         run: echo "TF_REPO_TOKEN is ${{ secrets.TF_REPO_TOKEN }}"
 

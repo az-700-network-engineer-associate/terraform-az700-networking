@@ -45,6 +45,12 @@
           - deploy-bootstrap
 
         steps:
+          # Print Input Variables for Debugging
+          - name : Debug Input Variables
+            run: |
+             echo "Environment is ${{ inputs.environment }}"
+             echo "Working Directory is ${{ inputs.working_directory }}"
+             echo "Backend Key is ${{ inputs.backend_key }}"
           # Checkout Terraform Repo
           - name: Checkout Terraform Repo
             uses: actions/checkout@v4
