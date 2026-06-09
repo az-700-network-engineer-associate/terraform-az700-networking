@@ -39,6 +39,25 @@ resource "azurerm_public_ip" "appgw_public_ip" {
   allocation_method   = "Static"
   sku                 = "StandardV2"
 }
+resource "aazurerm_web_application_firewall_policy" "waf_policy" {
+  name                = "${var.appgw_name}-waf-policy"
+  resource_group_name = module.resource_group.resource_group_name
+  location            = module.resource_group.location
+
+  policy_settings {
+    enabled = true
+    mode = "Detection"
+    request_body_check = true
+    max_request_body_size_kb = 128
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+}
 resource "azurerm_application_gateway" "appgw" {
   name                = var.appgw_name
   resource_group_name = module.resource_group.resource_group_name
@@ -48,6 +67,9 @@ resource "azurerm_application_gateway" "appgw" {
     tier     = "WAF_v2"
     capacity = 2
   }
+  # Associate the WAF policy with the Application Gateway
+   firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
+
   gateway_ip_configuration {
     name      = "${var.appgw_name}-ipconfig"
     subnet_id = module.app_gateway_subnet.subnet_id
@@ -63,14 +85,6 @@ resource "azurerm_application_gateway" "appgw" {
     public_ip_address_id = azurerm_public_ip.appgw_public_ip.id
   }
  
- #For WAF configuration, we can use the default rule set and enable it for all requests. This is a basic configuration and can be further customized based on specific security requirements.
-  
-  waf_configuration {
-    enabled = true
-    firewall_mode = "Detection"
-    rule_set_type = "OWASP"
-    rule_set_version = "3.2"
-  } 
 
 
   # Configure the backend address pool with the IP addresses of the VMSS instances
