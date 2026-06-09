@@ -14,6 +14,5 @@ module "application-gateway-waf-dev" {
     vnet_name = var.vnet_name
     vnet_address_space = var.vnet_address_space
     backend_pool_subnet_address_prefix = var.backend_pool_subnet_address_prefix
-    
 }
 
