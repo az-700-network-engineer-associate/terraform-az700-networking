@@ -21,7 +21,7 @@ jobs:
   deploy:
     uses: ./.github/workflows/reusable-terraform-module-deploy.yml
     with:
-      environment: ${{inputs.environment}}
-      working_directory: envs/dev/application-gateway-waf
-      backend_key: appgw-waf-dev.tfstate
+      environment: ${{ inputs.environment || 'dev' }}
+      working_directory: envs/${{ inputs.environment || 'dev' }}/application-gateway-waf
+      backend_key: appgw-waf-${{ inputs.environment || 'dev' }}.tfstate
     secrets: inherit
