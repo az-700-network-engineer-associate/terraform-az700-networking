@@ -39,7 +39,7 @@ resource "azurerm_public_ip" "appgw_public_ip" {
   allocation_method   = "Static"
   sku                 = "StandardV2"
 }
-resource "aazurerm_web_application_firewall_policy" "waf_policy" {
+resource "azurerm_web_application_firewall_policy" "waf_policy" {
   name                = "${var.appgw_name}-waf-policy"
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.location
@@ -48,7 +48,8 @@ resource "aazurerm_web_application_firewall_policy" "waf_policy" {
     enabled = true
     mode = "Detection"
     request_body_check = true
-    max_request_body_size_kb = 128
+    max_request_body_size_in_kb = 128
+    file_upload_limit_in_mb = 100
   }
 
   managed_rules {

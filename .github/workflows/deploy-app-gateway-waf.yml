@@ -6,7 +6,7 @@ on:
       environment:
         type: string
         description: 'environment to deploy'
-        default: dev
+        default: 'dev'
   push:
     branches:
       - main
